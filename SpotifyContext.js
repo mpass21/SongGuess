@@ -8,7 +8,7 @@ export const useSpotify = () => {
 
 export const SpotifyProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useState(null);
-  const [userInfo, setUserInfo] = useState(null); // <- You may want to add this too
+  const [userInfo, setUserInfo] = useState(null); 
 
   const value = { accessToken, setAccessToken, userInfo, setUserInfo };
   return (
@@ -18,4 +18,4 @@ export const SpotifyProvider = ({ children }) => {
   );
 };
 
-export { SpotifyContext }; // ✅ ADD THIS LINE
+export { SpotifyContext }; 

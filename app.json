@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "HelloWorld",
+    "name": "SongTrivia",
     "slug": "HelloWorld",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.mpass21.HelloWorld"
+      "bundleIdentifier": "com.mpass21.SongTrivia"
     },
     "android": {
       "adaptiveIcon": {
@@ -22,7 +22,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.mpass21.HelloWorld"
+      "package": "com.mpass21.SongTrivia"
     },
     "web": {
       "favicon": "./assets/favicon.png"

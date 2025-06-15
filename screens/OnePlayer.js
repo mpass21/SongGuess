@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useLayoutEffect, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,8 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { useSpotify } from '../SpotifyContext';
-import { startRound } from '../helper'; // uses named exports
+import { startRound } from '../helper';
+import { saveTopScore, getTopScore } from '../Firebase';
 
 const OnePlayerScreen = ({ navigation }) => {
   const [trackTitle, setTrackTitle] = useState(null);
@@ -19,10 +20,11 @@ const OnePlayerScreen = ({ navigation }) => {
   const [guess, setGuess] = useState('');
   const [showInput, setShowInput] = useState(false);
   const [score, setScore] = useState(0);
+  const [topScore, setTopScore] = useState(0);
   const [countdown, setCountdown] = useState(0);
   const [hasStarted, setHasStarted] = useState(false);
 
-  const { accessToken } = useSpotify();
+  const { accessToken, userInfo } = useSpotify();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -31,9 +33,27 @@ const OnePlayerScreen = ({ navigation }) => {
           <Text style={{ color: '#1DB954', marginRight: 15, fontWeight: 'bold' }}>Menu</Text>
         </TouchableOpacity>
       ),
-      headerLeft: () => null, // removes the back arrow
+      headerLeft: () => null,
     });
+
+    const fetchTopScore = async () => {
+      if (userInfo?.email) {
+        const score = await getTopScore(userInfo.email);
+        setTopScore(score);
+      }
+    };
+
+    fetchTopScore();
   }, [navigation]);
+
+  useEffect(() => {
+    console.log('saving score')
+    return () => {
+      if (userInfo?.email && score > topScore) {
+        saveTopScore(userInfo.email, score);
+      }
+    };
+  }, [score, userInfo?.email, topScore]);
 
   const handleStart = async () => {
     if (!accessToken) return setStatus("Login to Spotify first.");
@@ -57,7 +77,7 @@ const OnePlayerScreen = ({ navigation }) => {
       setStatus(`Wrong! It was "${trackTitle}"`);
     }
     setGuess('');
-    handleStart(); // Start next round
+    handleStart();
   };
 
   return (
@@ -65,6 +85,7 @@ const OnePlayerScreen = ({ navigation }) => {
       <View style={styles.container}>
         <Text style={styles.title}>Guess the Spotify Track</Text>
         <Text style={styles.score}>Score: {score}</Text>
+        <Text style={styles.score}>High Score: {topScore}</Text>
 
         {!hasStarted && (
           <TouchableOpacity style={styles.button} onPress={handleStart}>
@@ -116,7 +137,7 @@ const styles = StyleSheet.create({
   score: {
     fontSize: 18,
     color: '#fff',
-    marginBottom: 20,
+    marginBottom: 5,
   },
   button: {
     backgroundColor: '#1DB954',
